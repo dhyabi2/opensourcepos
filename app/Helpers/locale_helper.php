@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Employee;
+use CodeIgniter\Events\Events;
 use Config\OSPOS;
 
 /**
@@ -275,6 +276,12 @@ function get_payment_options(): array
 
     $payments[lang('Sales.bank_transfer')] = lang('Sales.bank_transfer');
     $payments[lang('Sales.wallet')]        = lang('Sales.wallet');
+
+    // Allow payment provider plugins to add additional payment options
+    $eventPayments = Events::trigger('payment_options', $payments);
+    if (is_array($eventPayments)) {
+        return $eventPayments;
+    }
 
     return $payments;
 }

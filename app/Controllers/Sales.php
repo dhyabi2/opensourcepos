@@ -539,6 +539,13 @@ class Sales extends Secure_Controller
             }
         }
 
+        Events::trigger('payment_initiated', [
+            'payment_type' => $paymentType,
+            'amount'       => $amountTendered ?? 0,
+            'sale_id'      => $this->sale_lib->get_sale_id(),
+            'customer_id'  => $this->sale_lib->get_customer(),
+        ]);
+
         return $this->reload($data);
     }
 
@@ -913,6 +920,10 @@ class Sales extends Secure_Controller
                     return $this->reload($data);
                 } else {
                     $data['barcode'] = $this->barcode_lib->generate_receipt_barcode($data['sale_id']);
+
+                    $pluginData = json_decode($this->request->getPost('plugin_data') ?? '{}', true) ?: [];
+                    Events::trigger('sale_completed', $data['sale_id_num'], $saleType, $pluginData);
+
                     $this->sale_lib->clear_all();
                     return view('sales/' . $invoiceView, $data);
                 }
