@@ -1824,6 +1824,8 @@ class Sales extends Secure_Controller
             $this->sale_lib->clear_all();
         } else {
             $data['success'] = lang('Sales.successfully_suspended_sale');
+            $pluginData = json_decode($this->request->getPost('plugin_data') ?? '{}', true) ?: [];
+            Events::trigger('sale_suspended', $saleIdNum, $pluginData);
             $this->sale_lib->clear_all();
         }
 
@@ -1863,6 +1865,7 @@ class Sales extends Secure_Controller
         if ($saleId > 0 && $this->sale->getSaleStatus($saleId) == SUSPENDED) {
             $this->sale_lib->clear_all();
             $this->sale_lib->copy_entire_sale($saleId);
+            Events::trigger('sale_unsuspended', (int)$saleId, []);
         }
 
         // Set current register mode to reflect that of unsuspended order type

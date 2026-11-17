@@ -142,6 +142,8 @@ OSPOS fires these events that plugins can listen to:
 | `item_deleted`        | `array $itemIds, array $pluginData = []`                          | Item(s) deleted                                         |
 | `sale_completed`      | `int $saleIdNum, int $saleType, array $pluginData = []`           | Sale finalized and receipt rendered (non-return sales only) |
 | `return_completed`    | `int $returnSaleId, int $originalSaleId, array $pluginData = []`  | Return finalized — fired instead of `sale_completed` when mode is return. `$originalSaleId` is the sale being returned against; `0` if the return was not initiated via `return_entire_sale()` |
+| `sale_suspended`      | `int $saleIdNum, array $pluginData = []`                          | Sale suspended and saved, before the register cart is cleared |
+| `sale_unsuspended`    | `int $saleId, array $pluginData = []`                             | Suspended sale copied back into the register cart       |
 | `receiving_completed` | `int $receivingId, string $mode, array $pluginData = []`          | Receiving finalized and items added to inventory        |
 
 > **Note:** `customer_saved` and `item_saved` always receive an array of IDs.
